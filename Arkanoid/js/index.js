@@ -1,5 +1,9 @@
 const canvas = document.querySelector('canvas')
-const ctx = canvas.getContext('2d')
+const ctx = canvas.getContext('2d') 
+
+const $Sprite = document.querySelector('#Sprite')
+const $Ladrillos = document.querySelector('#Ladrillos')
+
 canvas.width = 448
 canvas.height = 400
 
@@ -13,12 +17,13 @@ let x = canvas.width / 2
 let y = canvas.height-30
 
 //velocidad de la pelota
-let dx = 2
-let dy = -2
+let dx = -3
+let dy = -3
 
 //Variable Palito
 const alturaPalo = 10
 const anchoPalo = 50
+const SENSIBILIDAD_PALETA = 8
 
 
 let paloX = (canvas.width - anchoPalo) / 2
@@ -36,19 +41,19 @@ function dibujarPelota(){
     ctx.closePath()
 }
 function dibujarPalo(){
-ctx.fillStyle = '#89F'
 ctx.fillRect(paloX, paloY, anchoPalo, alturaPalo)
 
+ctx.drawImage($Sprite, 29, 174, anchoPalo, alturaPalo, paloX, paloY, anchoPalo, alturaPalo)
 }
 function dibujarLadrillos(){}
 
 function deteccionColision(){}
 
 function movimientoPalo(){
-    if(presionadoDerecha){
-        paloX += 7
-    }else if(presionadoIzquierda){
-        paloX -= 7
+    if(presionadoDerecha && paloX  < canvas.width - anchoPalo){
+        paloX += SENSIBILIDAD_PALETA
+    }else if(presionadoIzquierda && paloX > 0){
+        paloX -= SENSIBILIDAD_PALETA
     }
 }
 
@@ -63,6 +68,17 @@ if(x + dx > canvas.width - radioPelota || x + dx < radioPelota){
 //Rebotar pelota arriba 
 if( y + dy < radioPelota){
     dy = -dy
+}
+  
+//La pelota toca el palo
+const pelotaEsIgualaPalitoX = x > paloX && x < paloX + anchoPalo
+const pelotaTocaPalo = y + dy > paloY
+
+if(pelotaEsIgualaPalitoX && pelotaTocaPalo){
+    dy = -dy   //Cambiamos direccion de la pelota
+}else if(y + dy > canvas.height - radioPelota){ //Pelota toca el suelo
+    /*console.log('Game Over')
+    document.location.reload()*/
 }
 
 //rebota pelota abajo
